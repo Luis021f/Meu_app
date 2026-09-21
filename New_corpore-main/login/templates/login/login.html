@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Entrar | Northline Studio</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Cormorant+Garamond:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+      :root {
+        --charcoal: #111111;
+        --graphite: #1d1d1d;
+        --steel: #2f2f2f;
+        --stone: #e7e1d8;
+        --sand: #d2b48c;
+        --beige: #f4efe9;
+        --accent: #b77a43;
+        --muted: #5e5a57;
+        --line: #d8d0c8;
+      }
+
+      * { box-sizing: border-box; }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 32px 20px;
+        background: linear-gradient(135deg, #171717 0%, #2d2d2d 100%);
+        color: #fff;
+        font-family: 'Archivo', sans-serif;
+      }
+
+      .card {
+        width: min(440px, 100%);
+        background: rgba(255,255,255,0.06);
+        backdrop-filter: blur(8px);
+        border: 1px solid rgba(255,255,255,0.12);
+        padding: 36px 32px;
+        box-shadow: 0 25px 60px rgba(0, 0, 0, 0.32);
+      }
+
+      .brand {
+        display: inline-block;
+        font-family: 'Cormorant Garamond', serif;
+        font-size: 38px;
+        font-weight: 700;
+        letter-spacing: -0.05em;
+        color: #fff;
+        text-decoration: none;
+      }
+
+      .eyebrow {
+        margin: 20px 0 8px;
+        color: var(--sand);
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        font-size: 11px;
+        font-weight: 800;
+      }
+
+      h1 {
+        margin: 0 0 22px;
+        font-family: 'Cormorant Garamond', serif;
+        font-size: clamp(40px, 7vw, 56px);
+        line-height: 0.95;
+        letter-spacing: -0.04em;
+        font-weight: 600;
+      }
+
+      .message {
+        background: rgba(183, 122, 67, 0.12);
+        border-left: 3px solid var(--sand);
+        color: #f1d8ba;
+        padding: 10px 12px;
+        margin: 0 0 18px;
+        font-size: 14px;
+      }
+
+      label {
+        display: block;
+        margin: 16px 0 8px;
+        font-size: 13px;
+        font-weight: 700;
+        color: #f8f3ee;
+      }
+
+      input {
+        width: 100%;
+        border: 1px solid rgba(255,255,255,0.14);
+        background: rgba(255,255,255,0.04);
+        padding: 14px 15px;
+        font-size: 15px;
+        color: #fff;
+        outline: none;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+      }
+
+      input:focus {
+        border-color: var(--sand);
+        box-shadow: 0 0 0 3px rgba(210, 180, 140, 0.12);
+      }
+
+      button {
+        width: 100%;
+        border: none;
+        background: var(--sand);
+        color: var(--charcoal);
+        padding: 16px 18px;
+        margin-top: 24px;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        cursor: pointer;
+        transition: background 0.2s ease, transform 0.2s ease;
+      }
+
+      button:hover {
+        background: #d9b77e;
+        transform: translateY(-1px);
+      }
+
+      .footer {
+        margin-top: 22px;
+        font-size: 13px;
+        color: #d5d0ca;
+        text-align: center;
+      }
+
+      .footer a {
+        color: #fff;
+        font-weight: 800;
+        text-decoration: underline;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="card">
+      <a class="brand" href="{% url 'home' %}">Northline</a>
+      <p class="eyebrow">Acesso ao seu closet</p>
+      <h1>Bem-vindo</h1>
+
+      {% if messages %}
+        {% for message in messages %}
+          <p class="message">{{ message }}</p>
+        {% endfor %}
+      {% endif %}
+
+      <form method="POST" action="{% url 'login' %}">
+        {% csrf_token %}
+        <label for="email">E-mail</label>
+        <input id="email" type="email" name="email" required />
+
+        <label for="senha">Senha</label>
+        <input id="senha" type="password" name="senha" required />
+
+        <button type="submit">Entrar na conta</button>
+      </form>
+
+      <p class="footer">
+        Não tem conta? <a href="{% url 'cadastro' %}">Cadastre-se</a>
+      </p>
+    </main>
+  </body>
+</html>

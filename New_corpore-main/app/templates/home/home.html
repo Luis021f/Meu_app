@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Northline Studio | Moda masculina</title>
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Cormorant+Garamond:wght@400;500;600;700&display=swap" rel="stylesheet">
+	<style>
+		:root {
+			--charcoal: #111111;
+			--graphite: #1d1d1d;
+			--steel: #2f2f2f;
+			--stone: #e7e1d8;
+			--sand: #d2b48c;
+			--beige: #f4efe9;
+			--accent: #b77a43;
+			--muted: #5e5a57;
+			--line: #d8d0c8;
+		}
+		* { box-sizing: border-box; }
+		body {
+			margin: 0;
+			background: var(--beige);
+			color: var(--charcoal);
+			font-family: 'Archivo', sans-serif;
+		}
+		a { color: inherit; text-decoration: none; }
+		.announcement {
+			background: var(--charcoal);
+			color: #fff;
+			font-size: 11px;
+			letter-spacing: .18em;
+			padding: 11px 5%;
+			text-align: center;
+			text-transform: uppercase;
+		}
+		header {
+			align-items: center;
+			display: flex;
+			justify-content: space-between;
+			margin: auto;
+			max-width: 1240px;
+			padding: 24px 5%;
+		}
+		.logo {
+			font-family: 'Cormorant Garamond', serif;
+			font-size: 42px;
+			font-weight: 700;
+			letter-spacing: -.04em;
+		}
+		nav {
+			display: flex;
+			gap: 28px;
+			font-size: 14px;
+			font-weight: 700;
+			letter-spacing: .08em;
+			text-transform: uppercase;
+		}
+		nav a:first-child {
+			padding-bottom: 5px;
+			border-bottom: 2px solid var(--accent);
+		}
+		.actions {
+			display: flex;
+			align-items: center;
+			gap: 18px;
+		}
+		.button {
+			display: inline-block;
+			background: var(--charcoal);
+			color: white;
+			padding: 14px 22px;
+			font-weight: 700;
+			font-size: 12px;
+			letter-spacing: .12em;
+			text-transform: uppercase;
+			transition: .2s ease;
+		}
+		.button:hover {
+			transform: translateY(-2px);
+			background: var(--accent);
+			color: #fff;
+		}
+		.cart-link {
+			display: flex;
+			align-items: center;
+			gap: 8px;
+			font-weight: 700;
+			font-size: 14px;
+			text-transform: uppercase;
+			letter-spacing: .08em;
+		}
+		.badge {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			width: 20px;
+			height: 20px;
+			border-radius: 50%;
+			background: var(--sand);
+			color: var(--charcoal);
+			font-size: 11px;
+		}
+		.hero {
+			display: grid;
+			grid-template-columns: 1.1fr 1fr;
+			gap: 36px;
+			margin: 10px auto 90px;
+			max-width: 1240px;
+			padding: 0 5%;
+			align-items: center;
+		}
+		.hero-copy {
+			max-width: 520px;
+		}
+		.eyebrow {
+			color: var(--accent);
+			font-size: 12px;
+			font-weight: 800;
+			letter-spacing: .16em;
+			text-transform: uppercase;
+		}
+		h1 {
+			font-family: 'Cormorant Garamond', serif;
+			font-size: clamp(60px, 7vw, 104px);
+			line-height: .88;
+			letter-spacing: -.04em;
+			font-weight: 600;
+			margin: 18px 0 22px;
+		}
+		.hero-copy p {
+			color: var(--muted);
+			font-size: 17px;
+			line-height: 1.8;
+			max-width: 430px;
+			margin: 0;
+		}
+		.hero-actions {
+			display: flex;
+			gap: 18px;
+			margin-top: 28px;
+			align-items: center;
+		}
+		.secondary {
+			background: transparent;
+			border: 1px solid var(--charcoal);
+			color: var(--charcoal);
+		}
+		.hero-art {
+			background: linear-gradient(135deg, rgba(17,17,17,.18), rgba(17,17,17,.02)), url('https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&w=1200&q=80') center/cover;
+			height: 620px;
+			position: relative;
+		}
+		.hero-badge {
+			position: absolute;
+			left: -24px;
+			bottom: 24px;
+			background: rgba(255,255,255,0.82);
+			padding: 22px 20px;
+			font-family: 'Cormorant Garamond', serif;
+			font-size: 30px;
+			font-weight: 700;
+			line-height: 1;
+			letter-spacing: -.02em;
+		}
+		.section {
+			max-width: 1240px;
+			margin: auto;
+			padding: 0 5% 90px;
+		}
+		.section-heading {
+			display: flex;
+			justify-content: space-between;
+			align-items: end;
+			margin-bottom: 28px;
+		}
+		h2 {
+			font-family: 'Cormorant Garamond', serif;
+			font-size: 52px;
+			letter-spacing: -.04em;
+			font-weight: 600;
+			margin: 0;
+		}
+		.view-all {
+			padding-bottom: 5px;
+			border-bottom: 1px solid var(--charcoal);
+			font-size: 12px;
+			font-weight: 800;
+			letter-spacing: .1em;
+			text-transform: uppercase;
+		}
+		.products {
+			display: grid;
+			grid-template-columns: repeat(4, minmax(0, 1fr));
+			gap: 22px;
+		}
+		.product {
+			background: rgba(255,255,255,.18);
+		}
+		.product-image {
+			height: 325px;
+			overflow: hidden;
+			position: relative;
+		}
+		.product-image img {
+			display: block;
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+			transition: transform .4s ease;
+		}
+		.product:hover img { transform: scale(1.06); }
+		.tag {
+			position: absolute;
+			top: 12px;
+			left: 12px;
+			background: rgba(255,255,255,.85);
+			padding: 7px 10px;
+			font-size: 10px;
+			letter-spacing: .1em;
+			text-transform: uppercase;
+			font-weight: 700;
+		}
+		.product-info {
+			padding: 16px 0 0;
+		}
+		.product-info h3 {
+			margin: 0 0 6px;
+			font-size: 20px;
+			font-family: 'Cormorant Garamond', serif;
+		}
+		.product-info p {
+			color: var(--muted);
+			margin: 0;
+			font-size: 13px;
+		}
+		.price-row {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			margin-top: 14px;
+		}
+		.price {
+			font-weight: 800;
+			font-size: 16px;
+		}
+		.add {
+			background: transparent;
+			border: 1px solid var(--charcoal);
+			color: var(--charcoal);
+			padding: 9px 12px;
+			font-size: 12px;
+			font-weight: 700;
+			text-transform: uppercase;
+			letter-spacing: .08em;
+			cursor: pointer;
+		}
+		.add:hover {
+			background: var(--charcoal);
+			color: white;
+		}
+		.benefits {
+			display: grid;
+			grid-template-columns: repeat(3, minmax(0,1fr));
+			background: #efe7df;
+			padding: 35px 5%;
+			margin: 0 0 60px;
+			gap: 26px;
+		}
+		.benefit {
+			display: flex;
+			gap: 16px;
+			align-items: flex-start;
+		}
+		.benefit-number {
+			color: var(--accent);
+			font-family: 'Cormorant Garamond', serif;
+			font-size: 34px;
+			line-height: 1;
+		}
+		.benefit strong {
+			display: block;
+			font-size: 15px;
+			margin-bottom: 6px;
+		}
+		.benefit span {
+			color: var(--muted);
+			font-size: 13px;
+			line-height: 1.6;
+		}
+		footer {
+			padding: 26px 5%;
+			border-top: 1px solid var(--line);
+			text-align: center;
+			color: var(--muted);
+			font-size: 12px;
+			letter-spacing: .08em;
+			text-transform: uppercase;
+		}
+		@media (max-width: 760px) {
+			header { padding: 18px 5%; }
+			nav { display: none; }
+			.hero {
+				display: flex;
+				flex-direction: column-reverse;
+				margin-bottom: 70px;
+			}
+			.hero-art { height: 420px; }
+			.hero-badge { left: 18px; bottom: 18px; }
+			.products { grid-template-columns: repeat(2, minmax(0,1fr)); }
+			.product-image { height: 230px; }
+			.benefits { grid-template-columns: 1fr; }
+			.section-heading { align-items: flex-start; flex-direction: column; gap: 14px; }
+			h2 { font-size: 42px; }
+		}
+	</style>
+</head>
+<body>
+	<div class="announcement">Frete grátis acima de R$ 300</div>
+	<header>
+		<a class="logo" href="{% url 'home' %}">Northline</a>
+		<nav>
+			<a href="{% url 'home' %}">Início</a>
+			<a href="#colecao">Coleção</a>
+			<a href="#sobre">Sobre</a>
+		</nav>
+		<div class="actions">
+			<a class="button" href="{% url 'cadastro' %}">Cadastre-se</a>
+			<a class="cart-link" href="{% url 'carrinho' %}">Carrinho <span class="badge" id="cart-count">0</span></a>
+		</div>
+	</header>
+	<main>
+		<section class="hero">
+			<div class="hero-copy">
+				<span class="eyebrow">Nova coleção</span>
+				<h1>Força.<br>Estilo.<br>Confiança.</h1>
+				<p>Peças masculinas para o dia a dia, encontros e momentos importantes — com cortes precisos, materiais premium e acabamento impecável.</p>
+				<div class="hero-actions">
+					<a class="button" href="#colecao">Ver coleção</a>
+					<a class="button secondary" href="{% url 'cadastro' %}">Entrar</a>
+				</div>
+			</div>
+			<div class="hero-art">
+				<div class="hero-badge">Primavera 2026</div>
+			</div>
+		</section>
+		<section class="section" id="colecao">
+			<div class="section-heading">
+				<div>
+					<span class="eyebrow">Em destaque</span>
+					<h2>Essenciais do guarda-roupa</h2>
+				</div>
+				<a class="view-all" href="{% url 'cadastro' %}">Receba novidades</a>
+			</div>
+			<div class="products">
+				<article class="product">
+					<div class="product-image"><span class="tag">Casual</span><img src="https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=700&q=80" alt="Homem usando camiseta casual"></div>
+					<div class="product-info"><h3>Camiseta Atlas</h3><p>Algodão premium · corte slim</p><div class="price-row"><span class="price">R$ 129,90</span><button class="add" data-product="Camiseta Atlas" data-price="129.90">Comprar</button></div></div>
+				</article>
+				<article class="product">
+					<div class="product-image"><span class="tag">Urban</span><img src="https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&w=700&q=80" alt="Homem com look urbano elegante"></div>
+					<div class="product-info"><h3>Jaqueta Mercer</h3><p>Couro sintético · inverno leve</p><div class="price-row"><span class="price">R$ 329,90</span><button class="add" data-product="Jaqueta Mercer" data-price="329.90">Comprar</button></div></div>
+				</article>
+				<article class="product">
+					<div class="product-image"><span class="tag">Essentials</span><img src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=700&q=80" alt="Homem em calça e camisa"></div>
+					<div class="product-info"><h3>Calça Vantage</h3><p>Stretch · estrutura moderna</p><div class="price-row"><span class="price">R$ 219,90</span><button class="add" data-product="Calça Vantage" data-price="219.90">Comprar</button></div></div>
+				</article>
+				<article class="product">
+					<div class="product-image"><span class="tag">Premium</span><img src="https://images.unsplash.com/photo-1504593811423-6dd665756598?auto=format&fit=crop&w=700&q=80" alt="Homem em moletom premium"></div>
+					<div class="product-info"><h3>Moletom Harlan</h3><p>Malha pesada · edição limitada</p><div class="price-row"><span class="price">R$ 259,90</span><button class="add" data-product="Moletom Harlan" data-price="259.90">Comprar</button></div></div>
+				</article>
+			</div>
+		</section>
+		<div class="benefits" id="sobre">
+			<div class="benefit">
+				<span class="benefit-number">01</span>
+				<div><strong>Modelagem precisa</strong><span>Cortes pensados para conforto, mobilidade e presença.</span></div>
+			</div>
+			<div class="benefit">
+				<span class="benefit-number">02</span>
+				<div><strong>Entrega expressa</strong><span>Seu pedido chega rápido com logística segura.</span></div>
+			</div>
+			<div class="benefit">
+				<span class="benefit-number">03</span>
+				<div><strong>Atendimento premium</strong><span>Equipe pronta para orientar seu look ideal.</span></div>
+			</div>
+		</div>
+	</main>
+	<footer>Northline Studio • moda masculina essencial</footer>
+	<script>
+		const getCart = () => JSON.parse(localStorage.getItem('veloura-cart') || '[]');
+		const updateCount = () => document.getElementById('cart-count').textContent = getCart().reduce((total, item) => total + item.quantity, 0);
+		document.querySelectorAll('.add').forEach(button => {
+			button.addEventListener('click', () => {
+				const cart = getCart();
+				const item = cart.find(product => product.name === button.dataset.product);
+				if (item) item.quantity += 1;
+				else cart.push({ name: button.dataset.product, price: Number(button.dataset.price), quantity: 1 });
+				localStorage.setItem('veloura-cart', JSON.stringify(cart));
+				updateCount();
+				button.textContent = 'Adicionado';
+				setTimeout(() => button.textContent = 'Comprar', 950);
+			});
+		});
+		updateCount();
+	</script>
+</body>
+</html>

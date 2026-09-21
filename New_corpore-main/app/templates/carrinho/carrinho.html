@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carrinho | Northline Studio</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Cormorant+Garamond:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --charcoal: #111111;
+            --graphite: #1d1d1d;
+            --steel: #2f2f2f;
+            --stone: #e7e1d8;
+            --sand: #d2b48c;
+            --beige: #f4efe9;
+            --accent: #b77a43;
+            --muted: #5e5a57;
+            --line: #d8d0c8;
+        }
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            background: var(--beige);
+            color: var(--charcoal);
+            font-family: 'Archivo', sans-serif;
+        }
+        a { color: inherit; text-decoration: none; }
+        .announcement {
+            background: var(--charcoal);
+            color: #fff;
+            font-size: 11px;
+            letter-spacing: .18em;
+            padding: 11px 5%;
+            text-align: center;
+            text-transform: uppercase;
+        }
+        header {
+            max-width: 1180px;
+            margin: auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 24px 5%;
+        }
+        .logo {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 42px;
+            font-weight: 700;
+            letter-spacing: -.04em;
+        }
+        .back {
+            font-size: 12px;
+            font-weight: 800;
+            letter-spacing: .1em;
+            text-transform: uppercase;
+        }
+        main {
+            max-width: 1180px;
+            margin: auto;
+            padding: 40px 5% 100px;
+        }
+        .eyebrow {
+            color: var(--accent);
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: .18em;
+            text-transform: uppercase;
+        }
+        h1 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(48px, 6vw, 72px);
+            letter-spacing: -.04em;
+            margin: 16px 0 42px;
+            font-weight: 600;
+        }
+        .layout {
+            display: grid;
+            grid-template-columns: 1.5fr 1fr;
+            gap: 56px;
+        }
+        .cart-head {
+            display: flex;
+            justify-content: space-between;
+            padding-bottom: 14px;
+            border-bottom: 1px solid var(--charcoal);
+            font-size: 12px;
+            font-weight: 800;
+            letter-spacing: .12em;
+            text-transform: uppercase;
+        }
+        #items { min-height: 80px; }
+        .item {
+            display: grid;
+            grid-template-columns: 110px 1fr auto;
+            gap: 18px;
+            padding: 22px 0;
+            border-bottom: 1px solid var(--line);
+            align-items: center;
+        }
+        .item-image {
+            height: 110px;
+            overflow: hidden;
+            background: #ebe2d8;
+        }
+        .item-image img {
+            display: block;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .item h2 {
+            margin: 0 0 6px;
+            font-size: 22px;
+            font-family: 'Cormorant Garamond', serif;
+        }
+        .item p {
+            margin: 0;
+            font-size: 12px;
+            color: var(--muted);
+        }
+        .quantity {
+            display: flex;
+            align-items: center;
+            margin-top: 14px;
+            width: fit-content;
+            border: 1px solid var(--line);
+        }
+        .quantity button {
+            width: 30px;
+            height: 30px;
+            border: 0;
+            background: transparent;
+            font-size: 18px;
+            cursor: pointer;
+            color: var(--charcoal);
+        }
+        .quantity span {
+            display: inline-block;
+            width: 24px;
+            text-align: center;
+            font-size: 12px;
+            font-weight: 800;
+        }
+        .item-price {
+            font-size: 16px;
+            font-weight: 800;
+        }
+        .empty {
+            padding: 44px 0;
+            color: var(--muted);
+            line-height: 1.8;
+        }
+        .summary {
+            height: fit-content;
+            background: #efe7df;
+            padding: 28px 24px;
+        }
+        .summary h2 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 36px;
+            margin: 0 0 22px;
+        }
+        .summary-line {
+            display: flex;
+            justify-content: space-between;
+            margin: 12px 0;
+            font-size: 14px;
+        }
+        .total {
+            margin-top: 22px;
+            padding-top: 18px;
+            border-top: 1px solid var(--line);
+            font-weight: 800;
+            font-size: 18px;
+        }
+        .checkout {
+            margin-top: 20px;
+            width: 100%;
+            padding: 16px 20px;
+            border: 0;
+            background: var(--charcoal);
+            color: white;
+            font-weight: 700;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+            cursor: pointer;
+        }
+        .checkout:hover { background: var(--accent); color: white; }
+        .secure {
+            margin-top: 18px;
+            color: var(--muted);
+            font-size: 12px;
+            text-align: center;
+        }
+        @media (max-width: 760px) {
+            .layout { grid-template-columns: 1fr; }
+            .item { grid-template-columns: 92px 1fr auto; }
+            .item-image { height: 92px; }
+            header { align-items: flex-start; }
+            .back { font-size: 11px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="announcement">Frete grátis acima de R$ 300</div>
+    <header>
+        <a class="logo" href="{% url 'home' %}">Northline</a>
+        <a class="back" href="{% url 'home' %}">&larr; Continuar comprando</a>
+    </header>
+    <main>
+        <span class="eyebrow">Sua seleção</span>
+        <h1>Meu carrinho</h1>
+        <div class="layout">
+            <section>
+                <div class="cart-head">
+                    <span>Produto</span>
+                    <span id="item-count">0 itens</span>
+                </div>
+                <div id="items"></div>
+            </section>
+            <aside class="summary">
+                <h2>Resumo</h2>
+                <div class="summary-line"><span>Subtotal</span><span id="subtotal">R$ 0,00</span></div>
+                <div class="summary-line"><span>Entrega</span><span id="shipping">R$ 0,00</span></div>
+                <div class="summary-line total"><span>Total</span><span id="total">R$ 0,00</span></div>
+                <button class="checkout" type="button">Finalizar compra</button>
+                <p class="secure">Pagamento seguro e protegido.</p>
+            </aside>
+        </div>
+    </main>
+    <script>
+        const products = {
+            'Camiseta Atlas': 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=300&q=80',
+            'Jaqueta Mercer': 'https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&w=300&q=80',
+            'Calça Vantage': 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=300&q=80',
+            'Moletom Harlan': 'https://images.unsplash.com/photo-1504593811423-6dd665756598?auto=format&fit=crop&w=300&q=80'
+        };
+        const money = value => value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        const render = () => {
+            const cart = JSON.parse(localStorage.getItem('veloura-cart') ; '[]');
+            const items = document.getElementById('items');
+            const itemCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+            document.getElementById('item-count').textContent = itemCount + ' itens';
+
+            if (!cart.length) {
+                items.innerHTML = '<p class="empty">Seu carrinho está vazio. <a href="{% url 'home' %}#colecao" style="color: var(--accent); text-decoration: underline;">Explore a coleção</a></p>';
+            } else {
+                items.innerHTML = cart.map((item, index) =>
+                    '<article class="item">' +
+                        '<div class="item-image"><img src="' + products[item.name] + '" alt="' + item.name + '"></div>' +
+                        '<div><h2>' + item.name + '</h2><p>Northline Studio · peça exclusiva</p>' +
+                        '<div class="quantity"><button data-index="' + index + '" data-action="decrease">−</button><span>' + item.quantity + '</span><button data-index="' + index + '" data-action="increase">+</button></div></div>' +
+                        '<strong class="item-price">' + money(item.price * item.quantity) + '</strong>' +
+                    '</article>'
+                ).join('');
+            }
+
+            const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+            const shipping = subtotal === 0 ? 0 : subtotal >= 300 ? 0 : 25;
+            document.getElementById('subtotal').textContent = money(subtotal);
+            document.getElementById('shipping').textContent = shipping === 0 ? 'Grátis' : money(shipping);
+            document.getElementById('total').textContent = money(subtotal + shipping);
+
+            document.querySelectorAll('.quantity button').forEach(button => {
+                button.addEventListener('click', () => {
+                    const updated = JSON.parse(localStorage.getItem('veloura-cart') ; '[]');
+                    const item = updated[button.dataset.index];
+                    item.quantity += button.dataset.action === 'increase' ? 1 : -1;
+                    if (item.quantity <= 0) updated.splice(button.dataset.index, 1);
+                    localStorage.setItem('veloura-cart', JSON.stringify(updated));
+                    render();
+                });
+            });
+        };
+        render();
+    </script>
+</body>
+</html>

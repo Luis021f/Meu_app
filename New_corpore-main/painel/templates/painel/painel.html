@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estoque | Pulse Tech</title>
+    <style>
+        * { box-sizing: border-box; }
+        body { background: #f6f8fb; color: #111827; font-family: Arial, sans-serif; margin: 0; }
+        .top { align-items: center; background: #111827; color: #fff; display: flex; justify-content: space-between; padding: 22px 7%; }
+        .brand { color: #ff5b35; font-size: 30px; font-weight: 800; text-decoration: none; }
+        .top button { background: none; border: 0; color: #fff; cursor: pointer; font-size: 14px; }
+        .wrap { margin: auto; max-width: 1100px; padding: 58px 7%; }
+        .heading { align-items: end; display: flex; justify-content: space-between; gap: 24px; }
+        .eyebrow { color: #ff5b35; font-size: 12px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; }
+        h1 { font-size: clamp(42px, 8vw, 78px); margin: 14px 0 8px; }
+        .intro { color: #667085; font-size: 17px; margin: 0; }
+        .primary { background: #ff5b35; border-radius: 4px; color: #fff; font-weight: 700; padding: 14px 18px; text-decoration: none; white-space: nowrap; }
+        .messages { color: #027a48; font-weight: 700; list-style: none; padding: 0; }
+        .stock { background: #fff; margin-top: 38px; overflow-x: auto; }
+        table { border-collapse: collapse; min-width: 650px; width: 100%; }
+        th, td { border-bottom: 1px solid #eaecf0; padding: 16px; text-align: left; }
+        th { color: #667085; font-size: 12px; text-transform: uppercase; }
+        .product-image { height: 52px; object-fit: cover; width: 52px; }
+        .actions { display: flex; gap: 14px; }
+        .actions a { color: #d04426; font-weight: 700; text-decoration: none; }
+        .actions button { background: none; border: 0; color: #b42318; cursor: pointer; font: inherit; font-weight: 700; padding: 0; }
+        .empty { color: #667085; padding: 34px 16px; text-align: center; }
+        @media (max-width: 650px) { .heading { align-items: start; flex-direction: column; } .primary { align-self: stretch; text-align: center; } }
+    </style>
+</head>
+<body>
+    <header class="top">
+        <a class="brand" href="{% url 'home' %}">pulse tech.</a>
+        <form action="{% url 'logout' %}" method="post">{% csrf_token %}<button type="submit">Sair da conta</button></form>
+    </header>
+    <main class="wrap">
+        <section class="heading">
+            <div><span class="eyebrow">Área exclusiva</span><h1>Estoque</h1><p class="intro">Olá, {{ request.user.username }}. Gerencie os produtos disponíveis.</p></div>
+            <a class="primary" href="{% url 'cad_prod' %}">+ Cadastrar produto</a>
+        </section>
+        {% if messages %}<ul class="messages">{% for message in messages %}<li>{{ message }}</li>{% endfor %}</ul>{% endif %}
+        <section class="stock">
+            {% if produtos %}
+            <table>
+                <thead><tr><th>Produto</th><th>ID</th><th>Quantidade</th><th>Ações</th></tr></thead>
+                <tbody>{% for produto in produtos %}<tr>
+                    <td>{% if produto.imagem %}<img class="product-image" src="{{ produto.imagem.url }}" alt="{{ produto.nome }}">{% endif %} {{ produto.nome }}</td>
+                    <td>{{ produto.id }}</td><td>{{ produto.quantidade }}</td>
+                    <td><div class="actions"><a href="{% url 'editar_produto' produto.id %}">Editar</a><form action="{% url 'excluir_produto' produto.id %}" method="post">{% csrf_token %}<button type="submit">Excluir</button></form></div></td>
+                </tr>{% endfor %}</tbody>
+            </table>
+            {% else %}<p class="empty">Nenhum produto cadastrado no estoque.</p>{% endif %}
+        </section>
+    </main>
+</body>
+</html>

@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Verificação | Northline Studio</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Cormorant+Garamond:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+      :root {
+        --charcoal: #111111;
+        --graphite: #1d1d1d;
+        --steel: #2f2f2f;
+        --stone: #e7e1d8;
+        --sand: #d2b48c;
+        --beige: #f4efe9;
+        --accent: #b77a43;
+        --muted: #5e5a57;
+        --line: #d8d0c8;
+      }
+
+      * { box-sizing: border-box; }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 32px 20px;
+        background: linear-gradient(135deg, #171717 0%, #2d2d2d 100%);
+        color: #fff;
+        font-family: 'Archivo', sans-serif;
+      }
+
+      .card {
+        width: min(460px, 100%);
+        background: rgba(255,255,255,0.06);
+        backdrop-filter: blur(8px);
+        border: 1px solid rgba(255,255,255,0.12);
+        padding: 36px 32px;
+        box-shadow: 0 25px 60px rgba(0, 0, 0, 0.32);
+      }
+
+      .brand {
+        display: inline-block;
+        font-family: 'Cormorant Garamond', serif;
+        font-size: 38px;
+        font-weight: 700;
+        letter-spacing: -0.05em;
+        color: #fff;
+        text-decoration: none;
+      }
+
+      .step {
+        margin: 22px 0 10px;
+        color: var(--sand);
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+      }
+
+      h1 {
+        margin: 0 0 16px;
+        font-family: 'Cormorant Garamond', serif;
+        font-size: clamp(40px, 7vw, 56px);
+        line-height: 0.95;
+        letter-spacing: -0.04em;
+        font-weight: 600;
+      }
+
+      .intro {
+        color: #d5d0ca;
+        font-size: 15px;
+        line-height: 1.6;
+        margin: 0 0 28px;
+      }
+
+      .message {
+        background: rgba(183, 122, 67, 0.12);
+        border-left: 3px solid var(--sand);
+        color: #f1d8ba;
+        padding: 10px 12px;
+        margin: 0 0 18px;
+        font-size: 14px;
+      }
+
+      label {
+        display: block;
+        margin-bottom: 8px;
+        font-size: 13px;
+        font-weight: 700;
+        color: #f8f3ee;
+      }
+
+      input {
+        width: 100%;
+        border: 1px solid rgba(255,255,255,0.14);
+        background: rgba(255,255,255,0.04);
+        padding: 14px 15px;
+        font-size: 28px;
+        letter-spacing: 0.36em;
+        text-align: center;
+        color: #fff;
+        outline: none;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+      }
+
+      input:focus {
+        border-color: var(--sand);
+        box-shadow: 0 0 0 3px rgba(210, 180, 140, 0.12);
+      }
+
+      input::placeholder { color: #b8afb2; }
+
+      button {
+        width: 100%;
+        border: none;
+        background: var(--sand);
+        color: var(--charcoal);
+        padding: 16px 18px;
+        margin-top: 20px;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        cursor: pointer;
+        transition: background 0.2s ease, transform 0.2s ease;
+      }
+
+      button:hover {
+        background: #d9b77e;
+        transform: translateY(-1px);
+      }
+
+      .security-note {
+        margin-top: 20px;
+        text-align: center;
+        color: #d5d0ca;
+        font-size: 12px;
+        line-height: 1.5;
+      }
+
+      @media (max-width: 480px) {
+        .card { padding: 30px 24px; }
+        input { font-size: 22px; letter-spacing: 0.24em; }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="card">
+      <a class="brand" href="{% url 'home' %}">Northline</a>
+      <p class="step">Etapa 2 de 2</p>
+      <h1>Confirme seu acesso</h1>
+      <p class="intro">Enviamos um código de 6 dígitos para o seu e-mail. Digite-o abaixo para concluir o login.</p>
+
+      {% if messages %}
+        {% for message in messages %}
+          <p class="message">{{ message }}</p>
+        {% endfor %}
+      {% endif %}
+
+      <form method="post">
+        {% csrf_token %}
+        <label for="code">Código de verificação</label>
+        <input id="code" type="text" name="code" maxlength="6" inputmode="numeric" pattern="[0-9]{6}" autocomplete="one-time-code" required placeholder="000000" aria-describedby="code-help" />
+        <button type="submit">Validar e entrar</button>
+      </form>
+      <p class="security-note" id="code-help">Por segurança, o código pode ser usado uma única vez.</p>
+    </main>
+  </body>
+</html>
