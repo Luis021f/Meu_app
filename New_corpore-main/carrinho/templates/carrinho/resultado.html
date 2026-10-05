@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pedido | Northline Studio</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Cormorant+Garamond:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root { --ink: #171717; --paper: #f4efe9; --accent: #a45d36; --muted: #625e5a; --line: #d8d0c8; }
+        * { box-sizing: border-box; }
+        body { margin: 0; background: var(--paper); color: var(--ink); font-family: 'Archivo', sans-serif; }
+        header { max-width: 960px; margin: auto; padding: 26px 6%; }
+        .logo { color: inherit; font: 700 40px 'Cormorant Garamond', serif; text-decoration: none; }
+        main { max-width: 760px; margin: 5vh auto; padding: 0 6% 70px; }
+        .eyebrow { color: var(--accent); font-size: 11px; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; }
+        h1 { margin: 14px 0; font: 600 56px 'Cormorant Garamond', serif; }
+        p { color: var(--muted); line-height: 1.7; }
+        .order { margin: 32px 0; padding: 22px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+        .row { display: flex; justify-content: space-between; gap: 20px; padding: 8px 0; }
+        .total { margin-top: 8px; padding-top: 16px; border-top: 1px solid var(--line); font-weight: 800; }
+        .button { display: inline-block; margin-top: 14px; padding: 14px 20px; background: var(--ink); color: white; font-size: 12px; font-weight: 800; letter-spacing: .08em; text-decoration: none; text-transform: uppercase; }
+        @media (max-width: 520px) { h1 { font-size: 44px; } }
+    </style>
+</head>
+<body>
+    <header><a class="logo" href="{% url 'home' %}">Northline</a></header>
+    <main>
+        <span class="eyebrow">Pedido {{ pedido.pk }}</span>
+        {% if pedido.status == 'approved' %}
+            <h1>Pagamento aprovado</h1>
+            <p>Recebemos seu pagamento. Obrigado por comprar com a Northline Studio.</p>
+        {% elif pedido.status == 'rejected' or pedido.status == 'cancelled' or pedido.status == 'failed' %}
+            <h1>Pagamento não concluído</h1>
+            <p>O pedido não foi aprovado. Você pode voltar ao carrinho e tentar novamente.</p>
+        {% elif pedido.status == 'refunded' or pedido.status == 'charged_back' %}
+            <h1>Pagamento atualizado</h1>
+            <p>O status atual do pedido é: {{ pedido.get_status_display }}.</p>
+        {% else %}
+            <h1>Pagamento em processamento</h1>
+            <p>O Mercado Pago ainda está confirmando o pagamento. O status do pedido é {{ pedido.get_status_display|lower }}.</p>
+        {% endif %}
+        <section class="order" aria-label="Resumo do pedido">
+            <div class="row"><span>Subtotal</span><strong>R$ {{ pedido.subtotal|floatformat:2 }}</strong></div>
+            <div class="row"><span>Entrega</span><strong>{% if pedido.frete %}R$ {{ pedido.frete|floatformat:2 }}{% else %}Grátis{% endif %}</strong></div>
+            <div class="row total"><span>Total</span><strong>R$ {{ pedido.total|floatformat:2 }}</strong></div>
+        </section>
+        {% if pedido.status == 'rejected' or pedido.status == 'cancelled' or pedido.status == 'failed' %}
+            <a class="button" href="{% url 'carrinho' %}">Voltar ao carrinho</a>
+        {% else %}
+            <a class="button" href="{% url 'home' %}">Voltar à loja</a>
+        {% endif %}
+    </main>
+    {% if pedido.status == 'approved' %}
+        <script>localStorage.removeItem('veloura-cart');</script>
+    {% endif %}
+</body>
+</html>

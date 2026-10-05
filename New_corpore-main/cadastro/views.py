@@ -1,8 +1,8 @@
+from django.conf import settings
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.core.mail import send_mail
-from django.contrib.sites.shortcuts import get_current_site
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
 from django.contrib.auth.tokens import default_token_generator
@@ -12,12 +12,16 @@ import uuid
 def cadastro(request):
     if request.method == "POST":
         # Captura os dados do formulário em variáveis simples
-        username = request.POST.get("usuario")
-        email = request.POST.get("email")
+        username = request.POST.get("usuario", "").strip()
+        email = request.POST.get("email", "").strip().lower()
         senha = request.POST.get("senha")
         confirmar_senha = request.POST.get("confirmar_senha")
 
         # --- VALIDAÇÕES ---
+
+        if not username or not email or not senha or not confirmar_senha:
+            messages.error(request, "Preencha todos os campos.")
+            return render(request, "cadastro/cadastro.html")
 
         # 1. Verifica se as senhas coincidem
         if senha != confirmar_senha:
@@ -60,8 +64,7 @@ def cadastro(request):
         relative_link = reverse(
             "ativar_conta", kwargs={"uidb64": uid, "token": token}
         )
-        domain = get_current_site(request).domain
-        activation_url = f"http://difusao.tech{relative_link}"
+        activation_url = request.build_absolute_uri(relative_link)
 
         # 3. Envia o e-mail via SMTP
         assunto = "Confirme seu e-mail de cadastro"
@@ -72,7 +75,13 @@ def cadastro(request):
             f"Se você não solicitou este cadastro, ignore este e-mail."
         )
 
-        send_mail(assunto, mensagem, None, [user.email], fail_silently=False)
+        send_mail(
+            assunto,
+            mensagem,
+            settings.DEFAULT_FROM_EMAIL,
+            [user.email],
+            fail_silently=False,
+        )
 
         messages.success(
             request,

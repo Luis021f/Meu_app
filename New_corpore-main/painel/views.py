@@ -1,17 +1,32 @@
+from functools import wraps
+
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.core.exceptions import PermissionDenied
 from django.shortcuts import get_object_or_404, redirect, render
 
 from .forms import ProdutoForm
 from .models import Produto
+from .permissions import pode_gerenciar_produtos
 
-@login_required(login_url='login')
+
+def staff_required(view):
+    @wraps(view)
+    @login_required(login_url='login')
+    def wrapped_view(request, *args, **kwargs):
+        if not pode_gerenciar_produtos(request.user):
+            raise PermissionDenied
+        return view(request, *args, **kwargs)
+    return wrapped_view
+
+
+@staff_required
 def painel(request):
     produtos = Produto.objects.all()
     return render(request, 'painel/painel.html', {'produtos': produtos})
 
 
-@login_required(login_url='login')
+@staff_required
 def cad_prod(request):
     if request.method == 'POST':
         form = ProdutoForm(request.POST, request.FILES)
@@ -24,7 +39,7 @@ def cad_prod(request):
     return render(request, 'cad_prod/cad_prod.html', {'form': form, 'modo': 'Cadastrar'})
 
 
-@login_required(login_url='login')
+@staff_required
 def editar_produto(request, produto_id):
     produto = get_object_or_404(Produto, pk=produto_id)
     if request.method == 'POST':
@@ -38,7 +53,7 @@ def editar_produto(request, produto_id):
     return render(request, 'cad_prod/cad_prod.html', {'form': form, 'modo': 'Editar', 'produto': produto})
 
 
-@login_required(login_url='login')
+@staff_required
 def excluir_produto(request, produto_id):
     produto = get_object_or_404(Produto, pk=produto_id)
     if request.method == 'POST':
@@ -47,3 +62,8 @@ def excluir_produto(request, produto_id):
     return redirect('painel')
 
 # Create your views here.
+
+
+
+
+2   

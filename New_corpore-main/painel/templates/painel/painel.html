@@ -3,55 +3,160 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Estoque | Pulse Tech</title>
+    <title>Estoque | Northline Studio</title>
     <style>
+        :root { color-scheme: light; --ink: #17211f; --muted: #68736f; --line: #e3e9e5; --paper: #fff; --canvas: #f3f6f3; --accent: #e65332; --green: #16724b; }
         * { box-sizing: border-box; }
-        body { background: #f6f8fb; color: #111827; font-family: Arial, sans-serif; margin: 0; }
-        .top { align-items: center; background: #111827; color: #fff; display: flex; justify-content: space-between; padding: 22px 7%; }
-        .brand { color: #ff5b35; font-size: 30px; font-weight: 800; text-decoration: none; }
-        .top button { background: none; border: 0; color: #fff; cursor: pointer; font-size: 14px; }
-        .wrap { margin: auto; max-width: 1100px; padding: 58px 7%; }
-        .heading { align-items: end; display: flex; justify-content: space-between; gap: 24px; }
-        .eyebrow { color: #ff5b35; font-size: 12px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; }
-        h1 { font-size: clamp(42px, 8vw, 78px); margin: 14px 0 8px; }
-        .intro { color: #667085; font-size: 17px; margin: 0; }
-        .primary { background: #ff5b35; border-radius: 4px; color: #fff; font-weight: 700; padding: 14px 18px; text-decoration: none; white-space: nowrap; }
-        .messages { color: #027a48; font-weight: 700; list-style: none; padding: 0; }
-        .stock { background: #fff; margin-top: 38px; overflow-x: auto; }
-        table { border-collapse: collapse; min-width: 650px; width: 100%; }
-        th, td { border-bottom: 1px solid #eaecf0; padding: 16px; text-align: left; }
-        th { color: #667085; font-size: 12px; text-transform: uppercase; }
-        .product-image { height: 52px; object-fit: cover; width: 52px; }
-        .actions { display: flex; gap: 14px; }
-        .actions a { color: #d04426; font-weight: 700; text-decoration: none; }
-        .actions button { background: none; border: 0; color: #b42318; cursor: pointer; font: inherit; font-weight: 700; padding: 0; }
-        .empty { color: #667085; padding: 34px 16px; text-align: center; }
-        @media (max-width: 650px) { .heading { align-items: start; flex-direction: column; } .primary { align-self: stretch; text-align: center; } }
+        body { background: var(--canvas); color: var(--ink); font-family: Arial, sans-serif; margin: 0; }
+        button, input, select { font: inherit; }
+        .top { align-items: center; background: var(--ink); color: #fff; display: flex; justify-content: space-between; min-height: 72px; padding: 14px max(24px, calc((100% - 1160px) / 2)); }
+        .brand { color: #ff7658; font-size: 25px; font-weight: 800; text-decoration: none; }
+        .top button { background: transparent; border: 0; color: #e2e8e4; cursor: pointer; font-size: 14px; padding: 10px 0 10px 12px; }
+        .top button:hover { color: #fff; }
+        .wrap { margin: auto; max-width: 1160px; padding: 42px 28px 64px; }
+        .heading { align-items: center; display: flex; justify-content: space-between; gap: 24px; }
+        .eyebrow { color: var(--accent); font-size: 12px; font-weight: 700; text-transform: uppercase; }
+        h1 { font-size: 36px; line-height: 1.15; margin: 8px 0; }
+        .intro { color: var(--muted); font-size: 15px; margin: 0; }
+        .primary { align-items: center; background: var(--accent); border-radius: 5px; color: #fff; display: inline-flex; font-size: 14px; font-weight: 700; gap: 9px; padding: 12px 16px; text-decoration: none; white-space: nowrap; }
+        .primary:hover { background: #c94326; }
+        .primary span { font-size: 20px; font-weight: 400; line-height: 16px; }
+        .messages { background: #e9f5ee; border-left: 3px solid var(--green); color: #145c3d; list-style: none; margin: 24px 0 0; padding: 13px 16px; }
+        .stock { background: var(--paper); border: 1px solid var(--line); border-radius: 7px; margin-top: 30px; overflow: hidden; }
+        .stock-head { align-items: center; border-bottom: 1px solid var(--line); display: flex; justify-content: space-between; gap: 20px; padding: 20px 22px; }
+        .stock-title { font-size: 17px; font-weight: 700; margin: 0; }
+        .stock-count { color: var(--muted); font-size: 13px; margin: 5px 0 0; }
+        .filters { display: flex; gap: 10px; }
+        .filters input, .filters select { background: #fff; border: 1px solid #cfd8d2; border-radius: 4px; color: var(--ink); min-height: 40px; padding: 0 11px; }
+        .filters input { min-width: 230px; }
+        .filters input:focus, .filters select:focus { border-color: var(--green); outline: 2px solid #b8ddc9; }
+        .table-wrap { overflow-x: auto; }
+        table { border-collapse: collapse; min-width: 700px; width: 100%; }
+        th, td { border-bottom: 1px solid var(--line); padding: 14px 18px; text-align: left; }
+        th { background: #f8faf8; color: var(--muted); font-size: 11px; font-weight: 700; text-transform: uppercase; }
+        tbody tr:last-child td { border-bottom: 0; }
+        tbody tr:hover { background: #fbfcfb; }
+        tbody tr[hidden] { display: none; }
+        .product-cell { align-items: center; display: flex; gap: 12px; min-width: 210px; }
+        .product-image, .image-placeholder { background: #edf1ed; border-radius: 4px; flex: 0 0 48px; height: 48px; object-fit: cover; width: 48px; }
+        .image-placeholder { align-items: center; color: #738078; display: flex; font-size: 11px; justify-content: center; }
+        .product-name { display: block; font-weight: 700; }
+        .product-id { color: var(--muted); display: block; font-size: 12px; margin-top: 4px; }
+        .category, .date { color: #46534d; font-size: 14px; }
+        .price { font-variant-numeric: tabular-nums; font-weight: 700; white-space: nowrap; }
+        .quantity { font-variant-numeric: tabular-nums; font-weight: 700; }
+        .quantity-low { color: #a7461c; }
+        .quantity-zero { color: #b42318; }
+        .actions { align-items: center; display: flex; gap: 14px; white-space: nowrap; }
+        .actions a { color: #a93c23; font-size: 13px; font-weight: 700; text-decoration: none; }
+        .actions a:hover { text-decoration: underline; }
+        .actions button { background: transparent; border: 0; color: #b42318; cursor: pointer; font-size: 13px; font-weight: 700; padding: 0; }
+        .actions button:hover { text-decoration: underline; }
+        .empty { color: var(--muted); margin: 0; padding: 38px 20px; text-align: center; }
+        .empty[hidden] { display: none; }
+        @media (max-width: 700px) {
+            .top { min-height: 62px; padding: 10px 20px; }
+            .wrap { padding: 30px 16px 44px; }
+            .heading { align-items: flex-start; flex-direction: column; }
+            .primary { align-self: flex-start; }
+            .stock-head { align-items: stretch; flex-direction: column; padding: 17px; }
+            .filters { flex-direction: column; }
+            .filters input { min-width: 0; width: 100%; }
+            .table-wrap { overflow: visible; }
+            table { min-width: 0; }
+            thead { display: none; }
+            tbody { display: grid; gap: 10px; padding: 12px; }
+            tbody tr { border: 1px solid var(--line); border-radius: 5px; display: grid; gap: 2px 12px; grid-template-columns: repeat(2, minmax(0, 1fr)); padding: 10px; }
+            td { border: 0; min-width: 0; padding: 7px 4px; }
+            td:not(.product-cell)::before { color: var(--muted); content: attr(data-label); display: block; font-size: 10px; font-weight: 700; margin-bottom: 5px; text-transform: uppercase; }
+            .product-cell { grid-column: 1 / -1; min-width: 0; }
+            .actions-cell { align-self: end; grid-column: 1 / -1; }
+        }
+        @media (max-width: 360px) { h1 { font-size: 31px; } .actions { gap: 12px; } }
     </style>
 </head>
 <body>
     <header class="top">
-        <a class="brand" href="{% url 'home' %}">pulse tech.</a>
+        <a class="brand" href="{% url 'home' %}">Northline Studio</a>
         <form action="{% url 'logout' %}" method="post">{% csrf_token %}<button type="submit">Sair da conta</button></form>
     </header>
     <main class="wrap">
         <section class="heading">
             <div><span class="eyebrow">Área exclusiva</span><h1>Estoque</h1><p class="intro">Olá, {{ request.user.username }}. Gerencie os produtos disponíveis.</p></div>
-            <a class="primary" href="{% url 'cad_prod' %}">+ Cadastrar produto</a>
+            <a class="primary" href="{% url 'cad_prod' %}"><span aria-hidden="true">+</span> Cadastrar produto</a>
         </section>
         {% if messages %}<ul class="messages">{% for message in messages %}<li>{{ message }}</li>{% endfor %}</ul>{% endif %}
         <section class="stock">
             {% if produtos %}
-            <table>
-                <thead><tr><th>Produto</th><th>ID</th><th>Quantidade</th><th>Ações</th></tr></thead>
-                <tbody>{% for produto in produtos %}<tr>
-                    <td>{% if produto.imagem %}<img class="product-image" src="{{ produto.imagem.url }}" alt="{{ produto.nome }}">{% endif %} {{ produto.nome }}</td>
-                    <td>{{ produto.id }}</td><td>{{ produto.quantidade }}</td>
-                    <td><div class="actions"><a href="{% url 'editar_produto' produto.id %}">Editar</a><form action="{% url 'excluir_produto' produto.id %}" method="post">{% csrf_token %}<button type="submit">Excluir</button></form></div></td>
-                </tr>{% endfor %}</tbody>
-            </table>
+            <div class="stock-head">
+                <div><h2 class="stock-title">Produtos cadastrados</h2><p class="stock-count">{{ produtos|length }} produto{{ produtos|length|pluralize:"s" }} no estoque</p></div>
+                <div class="filters">
+                    <input id="product-search" type="search" placeholder="Buscar produto ou ID" aria-label="Buscar produto ou ID">
+                    <select id="category-filter" aria-label="Filtrar por categoria"><option value="">Todas as categorias</option></select>
+                </div>
+            </div>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Produto</th><th>Categoria</th><th>Preço</th><th>Quantidade</th><th>Adicionado em</th><th>Ações</th></tr></thead>
+                    <tbody id="product-list">{% for produto in produtos %}<tr data-search="{{ produto.nome }} {{ produto.id }} {{ produto.categoria }}" data-category="{{ produto.categoria }}">
+                        <td class="product-cell">
+                            {% if produto.imagem %}<img class="product-image" src="{{ produto.imagem.url }}" alt="">
+                            {% else %}<span class="image-placeholder" aria-hidden="true">Sem foto</span>{% endif %}
+                            <span><span class="product-name">{{ produto.nome }}</span><span class="product-id">ID {{ produto.id }}</span></span>
+                        </td>
+                        <td class="category" data-label="Categoria">{{ produto.categoria }}</td>
+                        <td class="price" data-label="Preço">R$ {{ produto.preco|floatformat:2 }}</td>
+                        <td class="quantity{% if produto.quantidade == 0 %} quantity-zero{% elif produto.quantidade <= 5 %} quantity-low{% endif %}" data-label="Quantidade">{{ produto.quantidade }}</td>
+                        <td class="date" data-label="Adicionado em">{{ produto.criado_em|date:"d/m/Y H:i" }}</td>
+                        <td class="actions-cell" data-label="Ações"><div class="actions"><a href="{% url 'editar_produto' produto.id %}">Editar</a><form action="{% url 'excluir_produto' produto.id %}" method="post">{% csrf_token %}<button type="submit">Excluir</button></form></div></td>
+                    </tr>{% endfor %}</tbody>
+                </table>
+            </div>
+            <p class="empty" id="no-results" hidden>Nenhum produto corresponde à busca.</p>
             {% else %}<p class="empty">Nenhum produto cadastrado no estoque.</p>{% endif %}
         </section>
     </main>
+    {% if produtos %}
+    <script>
+        const searchInput = document.getElementById('product-search');
+        const categoryFilter = document.getElementById('category-filter');
+        const productRows = Array.from(document.querySelectorAll('#product-list tr'));
+        const noResults = document.getElementById('no-results');
+
+        Array.from(new Set(productRows.map(row => row.dataset.category)))
+            .sort((first, second) => first.localeCompare(second, 'pt-BR'))
+            .forEach(category => {
+                const option = document.createElement('option');
+                option.value = category;
+                option.textContent = category;
+                categoryFilter.appendChild(option);
+            });
+
+        function filterProducts() {
+            const query = searchInput.value.trim().toLocaleLowerCase('pt-BR');
+            let visibleCount = 0;
+
+            productRows.forEach(row => {
+                const matchesQuery = row.dataset.search.toLocaleLowerCase('pt-BR').includes(query);
+                const matchesCategory = !categoryFilter.value || row.dataset.category === categoryFilter.value;
+                row.hidden = !(matchesQuery && matchesCategory);
+                if (!row.hidden) visibleCount += 1;
+            });
+
+            noResults.hidden = visibleCount > 0;
+        }
+
+        searchInput.addEventListener('input', filterProducts);
+        categoryFilter.addEventListener('change', filterProducts);
+    </script>
+    {% endif %}
 </body>
 </html>
+
+
+
+
+
+
+
+

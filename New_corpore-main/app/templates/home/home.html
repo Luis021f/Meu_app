@@ -66,6 +66,23 @@
 			display: flex;
 			align-items: center;
 			gap: 18px;
+			flex-wrap: wrap;
+			justify-content: flex-end;
+		}
+		.account-status {
+			max-width: 190px;
+			color: var(--muted);
+			font-size: 12px;
+			font-weight: 700;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+		}
+		.actions form { margin: 0; }
+		.actions .button {
+			border: 1px solid var(--charcoal);
+			cursor: pointer;
+			font-family: inherit;
 		}
 		.button {
 			display: inline-block;
@@ -300,8 +317,10 @@
 			text-transform: uppercase;
 		}
 		@media (max-width: 760px) {
-			header { padding: 18px 5%; }
+			header { padding: 18px 5%; flex-wrap: wrap; }
 			nav { display: none; }
+			.actions { flex: 1 0 100%; gap: 10px; }
+			.account-status { max-width: 130px; }
 			.hero {
 				display: flex;
 				flex-direction: column-reverse;
@@ -327,7 +346,16 @@
 			<a href="#sobre">Sobre</a>
 		</nav>
 		<div class="actions">
-			<a class="button" href="{% url 'cadastro' %}">Cadastre-se</a>
+			{% if user.is_authenticated %}
+				<span class="account-status">Conectado: {{ user.email|default:user.username }}</span>
+				<form method="post" action="{% url 'logout' %}">
+					{% csrf_token %}
+					<button class="button secondary" type="submit">Sair</button>
+				</form>
+			{% else %}
+				<a class="button" href="{% url 'cadastro' %}">Cadastre-se</a>
+				<a class="button secondary" href="{% url 'login' %}">Entrar</a>
+			{% endif %}
 			<a class="cart-link" href="{% url 'carrinho' %}">Carrinho <span class="badge" id="cart-count">0</span></a>
 		</div>
 	</header>
@@ -339,40 +367,43 @@
 				<p>Peças masculinas para o dia a dia, encontros e momentos importantes — com cortes precisos, materiais premium e acabamento impecável.</p>
 				<div class="hero-actions">
 					<a class="button" href="#colecao">Ver coleção</a>
-					<a class="button secondary" href="{% url 'cadastro' %}">Entrar</a>
+					<a class="button secondary" href="{% url 'carrinho' %}">Ir ao carrinho</a>
 				</div>
 			</div>
 			<div class="hero-art">
 				<div class="hero-badge">Primavera 2026</div>
 			</div>
 		</section>
-		<section class="section" id="colecao">
+		{% for categoria in categorias %}
+		<section class="section" id="{% if forloop.first %}colecao{% else %}{{ categoria.slug }}{% endif %}">
 			<div class="section-heading">
-				<div>
-					<span class="eyebrow">Em destaque</span>
-					<h2>Essenciais do guarda-roupa</h2>
-				</div>
-				<a class="view-all" href="{% url 'cadastro' %}">Receba novidades</a>
+				<div><span class="eyebrow">Produtos</span><h2>{{ categoria.nome }}</h2></div>
+				<a class="view-all" href="{% url 'categoria_produtos' categoria.slug %}">Ver categoria</a>
 			</div>
 			<div class="products">
+				{% for produto in categoria.produtos %}
 				<article class="product">
-					<div class="product-image"><span class="tag">Casual</span><img src="https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=700&q=80" alt="Homem usando camiseta casual"></div>
-					<div class="product-info"><h3>Camiseta Atlas</h3><p>Algodão premium · corte slim</p><div class="price-row"><span class="price">R$ 129,90</span><button class="add" data-product="Camiseta Atlas" data-price="129.90">Comprar</button></div></div>
+					<div class="product-image">
+						<span class="tag">{{ produto.categoria }}</span>
+						{% if produto.imagem %}<img src="{{ produto.imagem.url }}" alt="{{ produto.nome }}">{% endif %}
+					</div>
+					<div class="product-info">
+						<h3>{{ produto.nome }}</h3>
+						<p>{{ produto.quantidade }} em estoque</p>
+						<div class="price-row">
+							<span class="price">R$ {{ produto.preco|floatformat:2 }}</span>
+							<button class="add" data-product-id="{{ produto.id }}" data-product-name="{{ produto.nome|escape }}" data-product-image="{% if produto.imagem %}{{ produto.imagem.url }}{% endif %}" data-product-quantity="{{ produto.quantidade }}">Adicionar</button>
+						</div>
+					</div>
 				</article>
-				<article class="product">
-					<div class="product-image"><span class="tag">Urban</span><img src="https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&w=700&q=80" alt="Homem com look urbano elegante"></div>
-					<div class="product-info"><h3>Jaqueta Mercer</h3><p>Couro sintético · inverno leve</p><div class="price-row"><span class="price">R$ 329,90</span><button class="add" data-product="Jaqueta Mercer" data-price="329.90">Comprar</button></div></div>
-				</article>
-				<article class="product">
-					<div class="product-image"><span class="tag">Essentials</span><img src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=700&q=80" alt="Homem em calça e camisa"></div>
-					<div class="product-info"><h3>Calça Vantage</h3><p>Stretch · estrutura moderna</p><div class="price-row"><span class="price">R$ 219,90</span><button class="add" data-product="Calça Vantage" data-price="219.90">Comprar</button></div></div>
-				</article>
-				<article class="product">
-					<div class="product-image"><span class="tag">Premium</span><img src="https://images.unsplash.com/photo-1504593811423-6dd665756598?auto=format&fit=crop&w=700&q=80" alt="Homem em moletom premium"></div>
-					<div class="product-info"><h3>Moletom Harlan</h3><p>Malha pesada · edição limitada</p><div class="price-row"><span class="price">R$ 259,90</span><button class="add" data-product="Moletom Harlan" data-price="259.90">Comprar</button></div></div>
-				</article>
+				{% endfor %}
 			</div>
 		</section>
+		{% empty %}
+		<section class="section" id="colecao">
+			<div class="section-heading"><div><span class="eyebrow">Catálogo</span><h2>Produtos em breve</h2></div></div>
+		</section>
+		{% endfor %}
 		<div class="benefits" id="sobre">
 			<div class="benefit">
 				<span class="benefit-number">01</span>
@@ -390,21 +421,36 @@
 	</main>
 	<footer>Northline Studio • moda masculina essencial</footer>
 	<script>
-		const getCart = () => JSON.parse(localStorage.getItem('veloura-cart') || '[]');
+		const getCart = () => {
+			try {
+				const cart = JSON.parse(localStorage.getItem('veloura-cart') || '[]');
+				return Array.isArray(cart)
+					? cart
+						.filter(item => item && Number.isSafeInteger(Number(item.id)) && Number.isInteger(Number(item.quantity)) && Number(item.quantity) > 0)
+						.map(item => ({ id: Number(item.id), quantity: Number(item.quantity) }))
+					: [];
+			} catch { return []; }
+		};
 		const updateCount = () => document.getElementById('cart-count').textContent = getCart().reduce((total, item) => total + item.quantity, 0);
 		document.querySelectorAll('.add').forEach(button => {
 			button.addEventListener('click', () => {
 				const cart = getCart();
-				const item = cart.find(product => product.name === button.dataset.product);
+				const productId = Number(button.dataset.productId);
+				const stock = Number(button.dataset.productQuantity);
+				const item = cart.find(product => Number(product.id) === productId);
+				if (item && item.quantity >= stock) return;
 				if (item) item.quantity += 1;
-				else cart.push({ name: button.dataset.product, price: Number(button.dataset.price), quantity: 1 });
+				else cart.push({ id: productId, quantity: 1 });
 				localStorage.setItem('veloura-cart', JSON.stringify(cart));
 				updateCount();
+				const label = button.textContent;
 				button.textContent = 'Adicionado';
-				setTimeout(() => button.textContent = 'Comprar', 950);
+				setTimeout(() => button.textContent = label, 950);
 			});
 		});
 		updateCount();
 	</script>
 </body>
 </html>
+
+

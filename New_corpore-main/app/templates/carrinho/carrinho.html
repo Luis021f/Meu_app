@@ -188,6 +188,8 @@
             cursor: pointer;
         }
         .checkout:hover { background: var(--accent); color: white; }
+        .checkout:disabled { cursor: not-allowed; opacity: .55; }
+        .messages { margin: 0 0 18px; padding: 12px 16px; background: #fff1ef; color: #8f271c; font-size: 14px; }
         .secure {
             margin-top: 18px;
             color: var(--muted);
@@ -212,6 +214,11 @@
     <main>
         <span class="eyebrow">Sua seleção</span>
         <h1>Meu carrinho</h1>
+        {% if messages %}
+            <div class="messages" role="alert">
+                {% for message in messages %}<p>{{ message }}</p>{% endfor %}
+            </div>
+        {% endif %}
         <div class="layout">
             <section>
                 <div class="cart-head">
@@ -225,39 +232,68 @@
                 <div class="summary-line"><span>Subtotal</span><span id="subtotal">R$ 0,00</span></div>
                 <div class="summary-line"><span>Entrega</span><span id="shipping">R$ 0,00</span></div>
                 <div class="summary-line total"><span>Total</span><span id="total">R$ 0,00</span></div>
-                <button class="checkout" type="button">Finalizar compra</button>
+                <form id="checkout-form" method="post" action="{% url 'iniciar_checkout' %}">
+                    {% csrf_token %}
+                    <input id="cart-data" type="hidden" name="cart">
+                    <button id="checkout-button" class="checkout" type="submit" disabled>Finalizar compra</button>
+                </form>
                 <p class="secure">Pagamento seguro e protegido.</p>
             </aside>
         </div>
     </main>
+    {{ produtos_json|json_script:'cart-products' }}
     <script>
-        const products = {
-            'Camiseta Atlas': 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=300&q=80',
-            'Jaqueta Mercer': 'https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&w=300&q=80',
-            'Calça Vantage': 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=300&q=80',
-            'Moletom Harlan': 'https://images.unsplash.com/photo-1504593811423-6dd665756598?auto=format&fit=crop&w=300&q=80'
-        };
+        const catalog = JSON.parse(document.getElementById('cart-products').textContent);
+        const products = Object.fromEntries(catalog.map(product => [Number(product.id), product]));
         const money = value => value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        const getCart = () => {
+            try {
+                const cart = JSON.parse(localStorage.getItem('veloura-cart') || '[]');
+                return Array.isArray(cart) ? cart
+                    .filter(item => item && Number.isSafeInteger(Number(item.id)) && Number.isInteger(Number(item.quantity)) && Number(item.quantity) > 0)
+                    .map(item => ({ id: Number(item.id), quantity: Number(item.quantity) })) : [];
+            } catch {
+                return [];
+            }
+        };
+        const escapeHtml = value => String(value).replace(/[&<>"']/g, character => ({
+            '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+        })[character]);
         const render = () => {
-            const cart = JSON.parse(localStorage.getItem('veloura-cart') ; '[]');
+            const cart = getCart();
             const items = document.getElementById('items');
+            const hasInvalidItem = cart.some(item => {
+                const product = products[item.id];
+                return !product || Number(product.price) <= 0 || item.quantity > product.quantidade;
+            });
+            document.getElementById('checkout-button').disabled = cart.length === 0 || hasInvalidItem;
             const itemCount = cart.reduce((sum, item) => sum + item.quantity, 0);
             document.getElementById('item-count').textContent = itemCount + ' itens';
 
             if (!cart.length) {
                 items.innerHTML = '<p class="empty">Seu carrinho está vazio. <a href="{% url 'home' %}#colecao" style="color: var(--accent); text-decoration: underline;">Explore a coleção</a></p>';
             } else {
-                items.innerHTML = cart.map((item, index) =>
-                    '<article class="item">' +
-                        '<div class="item-image"><img src="' + products[item.name] + '" alt="' + item.name + '"></div>' +
-                        '<div><h2>' + item.name + '</h2><p>Northline Studio · peça exclusiva</p>' +
-                        '<div class="quantity"><button data-index="' + index + '" data-action="decrease">−</button><span>' + item.quantity + '</span><button data-index="' + index + '" data-action="increase">+</button></div></div>' +
-                        '<strong class="item-price">' + money(item.price * item.quantity) + '</strong>' +
-                    '</article>'
-                ).join('');
+                items.innerHTML = cart.map((item, index) => {
+                    const product = products[item.id];
+                    const name = product ? product.nome : 'Produto indisponível';
+                    const stock = product ? Number(product.quantidade) : 0;
+                    const price = product ? Number(product.preco) : 0;
+                    const image = product && product.imagem
+                        ? '<img src="' + escapeHtml(product.imagem) + '" alt="' + escapeHtml(name) + '">'
+                        : '';
+                    return '<article class="item">' +
+                        '<div class="item-image">' + image + '</div>' +
+                        '<div><h2>' + escapeHtml(name) + '</h2><p>' + (product ? 'Estoque disponível: ' + stock : 'Removido do catálogo') + '</p>' +
+                        '<div class="quantity"><button data-index="' + index + '" data-action="decrease" aria-label="Diminuir quantidade">−</button><span>' + item.quantity + '</span><button data-index="' + index + '" data-action="increase" aria-label="Aumentar quantidade"' + (!product || item.quantity >= stock ? ' disabled' : '') + '>+</button></div></div>' +
+                        '<strong class="item-price">' + money(price * item.quantity) + '</strong>' +
+                    '</article>';
+                }).join('');
             }
 
-            const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+            const subtotal = cart.reduce((sum, item) => {
+                const product = products[item.id];
+                return sum + (product ? Number(product.preco) * item.quantity : 0);
+            }, 0);
             const shipping = subtotal === 0 ? 0 : subtotal >= 300 ? 0 : 25;
             document.getElementById('subtotal').textContent = money(subtotal);
             document.getElementById('shipping').textContent = shipping === 0 ? 'Grátis' : money(shipping);
@@ -265,8 +301,10 @@
 
             document.querySelectorAll('.quantity button').forEach(button => {
                 button.addEventListener('click', () => {
-                    const updated = JSON.parse(localStorage.getItem('veloura-cart') ; '[]');
+                    const updated = getCart();
                     const item = updated[button.dataset.index];
+                    const product = products[item.id];
+                    if (button.dataset.action === 'increase' && (!product || item.quantity >= Number(product.quantidade))) return;
                     item.quantity += button.dataset.action === 'increase' ? 1 : -1;
                     if (item.quantity <= 0) updated.splice(button.dataset.index, 1);
                     localStorage.setItem('veloura-cart', JSON.stringify(updated));
@@ -274,6 +312,19 @@
                 });
             });
         };
+        document.getElementById('checkout-form').addEventListener('submit', event => {
+            const cart = getCart();
+            if (!cart.length) {
+                event.preventDefault();
+                return;
+            }
+            document.getElementById('cart-data').value = JSON.stringify(
+                cart.map(({ id, quantity }) => ({ id, quantity }))
+            );
+            const button = document.getElementById('checkout-button');
+            button.disabled = true;
+            button.textContent = 'Conectando ao Mercado Pago...';
+        });
         render();
     </script>
 </body>

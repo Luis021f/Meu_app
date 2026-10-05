@@ -11,9 +11,12 @@ https://docs.djangoproject.com/en/6.1/ref/settings/
 """
 
 from pathlib import Path
+import os
+from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+load_dotenv(BASE_DIR / '.env')
 
 
 # Quick-start development settings - unsuitable for production
@@ -107,9 +110,9 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/6.1/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'pt-br'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'America/Sao_Paulo'
 
 USE_I18N = True
 
@@ -134,11 +137,32 @@ MEDIA_ROOT = BASE_DIR / 'media'
 #    },
 #}
 
-# Configuração de E-mail (Gmail SMTP)
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-EMAIL_HOST_USER = ''# Seu e-mail completo do Gmail
-EMAIL_HOST_PASSWORD = ''# Senha do aplicativo gerada no Gmail
-DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+# Configuração de e-mail. Sem credenciais SMTP, exibe os e-mails no terminal.
+MERCADOPAGO_ACCESS_TOKEN = os.getenv('MERCADOPAGO_ACCESS_TOKEN', '')
+MERCADOPAGO_SITE_URL = os.getenv('MERCADOPAGO_SITE_URL', '')
+MERCADOPAGO_WEBHOOK_URL = os.getenv('MERCADOPAGO_WEBHOOK_URL', '')
+MERCADOPAGO_WEBHOOK_SECRET = os.getenv('MERCADOPAGO_WEBHOOK_SECRET', '')
+
+if DEBUG:
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+  
+else:
+    
+    EMAIL_HOST = 'smtp.gmail.com'
+    EMAIL_PORT = 587
+    EMAIL_USE_TLS = True
+    EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', '')
+    EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', '')
+    DEFAULT_FROM_EMAIL = (
+        os.getenv('DEFAULT_FROM_EMAIL')
+        or EMAIL_HOST_USER
+        or 'no-reply@difusao.tech'
+    )
+    EMAIL_BACKEND = (
+        'django.core.mail.backends.smtp.EmailBackend'
+        if EMAIL_HOST_USER and EMAIL_HOST_PASSWORD
+        else 'django.core.mail.backends.console.EmailBackend'
+    )
+
+
+    

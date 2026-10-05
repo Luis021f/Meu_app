@@ -153,7 +153,11 @@
       <a class="brand" href="{% url 'home' %}">Northline</a>
       <p class="step">Etapa 2 de 2</p>
       <h1>Confirme seu acesso</h1>
-      <p class="intro">Enviamos um código de 6 dígitos para o seu e-mail. Digite-o abaixo para concluir o login.</p>
+      {% if codigo_no_terminal %}
+        <p class="intro">O código de 6 dígitos foi exibido no terminal do servidor. Digite-o abaixo para concluir o login.</p>
+      {% else %}
+        <p class="intro">Enviamos um código de 6 dígitos para o seu e-mail. Digite-o abaixo para concluir o login.</p>
+      {% endif %}
 
       {% if messages %}
         {% for message in messages %}
@@ -171,3 +175,9 @@
     </main>
   </body>
 </html>
+
+
+
+
+
+

@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ categoria }} | Northline Studio</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Cormorant+Garamond:wght@500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root { --ink: #161616; --paper: #f4efe9; --muted: #66605a; --accent: #b77a43; --line: #d8d0c8; }
+        * { box-sizing: border-box; }
+        body { margin: 0; background: var(--paper); color: var(--ink); font-family: 'Archivo', sans-serif; }
+        a { color: inherit; text-decoration: none; }
+        header { align-items: center; border-bottom: 1px solid var(--line); display: flex; justify-content: space-between; margin: auto; max-width: 1240px; padding: 22px 5%; }
+        .logo { font-family: 'Cormorant Garamond', serif; font-size: 38px; font-weight: 700; }
+        .cart { font-size: 13px; font-weight: 800; text-transform: uppercase; }
+        main { margin: auto; max-width: 1240px; padding: 56px 5% 90px; }
+        .eyebrow { color: var(--accent); font-size: 11px; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; }
+        h1 { font-family: 'Cormorant Garamond', serif; font-size: 64px; font-weight: 600; margin: 10px 0 36px; }
+        .products { display: grid; gap: 24px; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
+        .product { min-width: 0; }
+        .image { aspect-ratio: 4 / 5; background: #e5ded6; overflow: hidden; }
+        .image img { height: 100%; object-fit: cover; width: 100%; }
+        .details { padding-top: 14px; }
+        h2 { font-family: 'Cormorant Garamond', serif; font-size: 25px; margin: 0 0 5px; }
+        .stock { color: var(--muted); font-size: 12px; margin: 0; }
+        .buy-row { align-items: center; display: flex; justify-content: space-between; margin-top: 14px; }
+        .price { font-size: 15px; font-weight: 800; }
+        button { background: var(--ink); border: 0; color: white; cursor: pointer; font: inherit; font-size: 11px; font-weight: 800; padding: 12px 14px; text-transform: uppercase; }
+        button:disabled { cursor: not-allowed; opacity: .5; }
+        .empty { color: var(--muted); padding: 25px 0; }
+        @media (max-width: 600px) { h1 { font-size: 48px; } .products { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; } }
+    </style>
+</head>
+<body>
+    <header>
+        <a class="logo" href="{% url 'home' %}">Northline</a>
+        <a class="cart" href="{% url 'carrinho' %}">Carrinho <span id="cart-count">0</span></a>
+    </header>
+    <main>
+        <span class="eyebrow">Catalogo</span>
+        <h1>{{ categoria }}</h1>
+        {% if produtos %}
+            <section class="products">
+                {% for produto in produtos %}
+                    <article class="product">
+                        <div class="image">{% if produto.imagem %}<img src="{{ produto.imagem.url }}" alt="{{ produto.nome }}">{% endif %}</div>
+                        <div class="details">
+                            <h2>{{ produto.nome }}</h2>
+                            <p class="stock">{{ produto.quantidade }} em estoque</p>
+                            <div class="buy-row">
+                                <span class="price">R$ {{ produto.preco|floatformat:2 }}</span>
+                                <button class="add" data-id="{{ produto.id }}" data-stock="{{ produto.quantidade }}">Adicionar</button>
+                            </div>
+                        </div>
+                    </article>
+                {% endfor %}
+            </section>
+        {% else %}
+            <p class="empty">Nao ha produtos disponiveis nesta categoria.</p>
+        {% endif %}
+    </main>
+    <script>
+        const readCart = () => {
+            try {
+                const value = JSON.parse(localStorage.getItem('veloura-cart') || '[]');
+                return Array.isArray(value) ? value : [];
+            } catch { return []; }
+        };
+        const refreshCount = () => {
+            document.getElementById('cart-count').textContent = readCart()
+                .reduce((sum, item) => sum + Number(item.quantity || 0), 0);
+        };
+        document.querySelectorAll('.add').forEach(button => {
+            button.addEventListener('click', () => {
+                const cart = readCart();
+                const id = Number(button.dataset.id);
+                const stock = Number(button.dataset.stock);
+                const item = cart.find(entry => Number(entry.id) === id);
+                if (item && Number(item.quantity) >= stock) return;
+                if (item) item.quantity = Number(item.quantity) + 1;
+                else cart.push({ id, quantity: 1 });
+                localStorage.setItem('veloura-cart', JSON.stringify(cart));
+                refreshCount();
+                button.textContent = 'Adicionado';
+                setTimeout(() => button.textContent = 'Adicionar', 900);
+            });
+        });
+        refreshCount();
+    </script>
+</body>
+</html>

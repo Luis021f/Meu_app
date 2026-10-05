@@ -27,6 +27,10 @@ from painel import views as painel_views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('carrinho/', carrinho_views.carrinho, name='carrinho'),
+    path('carrinho/checkout/', carrinho_views.iniciar_checkout, name='iniciar_checkout'),
+    path('carrinho/resultado/', carrinho_views.resultado_checkout, name='resultado_checkout'),
+    path('pagamentos/mercado-pago/webhook/', carrinho_views.webhook_mercado_pago, name='webhook_mercado_pago'),
+    path('categoria/<slug:categoria_slug>/', app_views.categoria_produtos, name='categoria_produtos'),
     path('home/', app_views.home, name='home'),
     path('', app_views.home, name='home'),
     path('login/', login_views.login_view, name='login'),

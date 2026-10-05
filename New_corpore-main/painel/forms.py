@@ -6,8 +6,9 @@ from .models import Produto
 class ProdutoForm(forms.ModelForm):
     class Meta:
         model = Produto
-        fields = ['nome', 'imagem', 'quantidade']
+        fields = ['nome', 'categoria', 'preco', 'imagem', 'quantidade']
         widgets = {
+            'preco': forms.NumberInput(attrs={'min': '0.01', 'step': '0.01'}),
             'quantidade': forms.NumberInput(attrs={'min': 0}),
         }
 
@@ -15,6 +16,12 @@ class ProdutoForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         if self.instance and self.instance.pk:
             self.fields['imagem'].required = False
+
+    def clean_categoria(self):
+        categoria = self.cleaned_data['categoria'].strip()
+        if not categoria:
+            raise forms.ValidationError('Informe uma categoria para o produto.')
+        return categoria
 
     def clean_imagem(self):
         imagem = self.cleaned_data.get('imagem')
